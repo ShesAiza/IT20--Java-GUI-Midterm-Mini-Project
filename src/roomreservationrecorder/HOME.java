@@ -708,22 +708,33 @@ public class HOME extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        clearFields();
+    updateStatus("Fields cleared.");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
+        showAvailability();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
+       if (recordsWindow == null ||
+        !recordsWindow.isDisplayable()) {
+
+        recordsWindow = new RECORDTAB(tracker);
+    }
+
+    recordsWindow.refreshTable();
+    recordsWindow.setVisible(true);
+    recordsWindow.setLocationRelativeTo(this);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+           javax.swing.SwingUtilities.invokeLater(() -> {
+        new HOME().setVisible(true);
+    });
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
