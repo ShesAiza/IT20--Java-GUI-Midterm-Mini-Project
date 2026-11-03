@@ -13,8 +13,6 @@ public class RECORDTAB extends javax.swing.JFrame {
     private final RoomReservationRecorder tracker;
     private javax.swing.table.DefaultTableModel tableModel;
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RECORDTAB.class.getName());
-    
     /**
      * Creates new form RECORDTAB
      */
@@ -232,7 +230,59 @@ public class RECORDTAB extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+
+    String input = jTextField1.getText().trim();
+
+    if (input.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Please enter a room number."
+        );
+        return;
+    }
+
+    try {
+
+        int roomNumber = Integer.parseInt(input);
+
+        // MANUAL LINEAR SEARCH
+        int index = tracker.searchRoom(roomNumber);
+
+        if (index == -1) {
+
+            jLabel3.setText(
+                "Room " + roomNumber + " NOT FOUND!"
+            );
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Room " + roomNumber + " was not found."
+            );
+
+        } else {
+
+            // Restore all records
+            refreshTable();
+
+            // Select the matching record
+            jTable1.setRowSelectionInterval(index, index);
+
+            jTable1.scrollRectToVisible(
+                jTable1.getCellRect(index, 0, true)
+            );
+
+            jLabel3.setText(
+                "Room " + roomNumber + " FOUND!"
+            );
+        }
+
+    } catch (NumberFormatException e) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Room number must contain numbers only."
+        );
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
