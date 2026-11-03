@@ -10,6 +10,13 @@ package roomreservationrecorder;
  */
 public class HOME extends javax.swing.JFrame {
     
+    // SHARED BACKEND
+    private final RoomReservationRecorder tracker =
+        new RoomReservationRecorder();
+
+    // Records window reference
+    private RECORDTAB recordsWindow = null;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HOME.class.getName());
 
     /**
@@ -19,14 +26,69 @@ public class HOME extends javax.swing.JFrame {
     initComponents();
 
     setLocationRelativeTo(null);
+    setTitle("Hotel Room Reservation Tracker");
 
-    // Set actual room types
+    // Room types
     jComboBox1.setModel(
         new javax.swing.DefaultComboBoxModel<>(
             new String[]{"Single", "Double", "Suite"}
         )
     );
-}
+
+    // Default price
+    jTextField2.setText("1200");
+
+    // Automatically update room price
+    jComboBox1.addActionListener(e -> updateRoomPrice());
+
+    // Connect buttons
+    jButton1.addActionListener(e -> addRoom());
+    jButton3.addActionListener(e -> bookRoom());
+    jButton4.addActionListener(e -> nextBooking());
+    jButton6.addActionListener(e -> assignOrVacate());
+    jButton7.addActionListener(e -> searchRoom());
+
+    updateQueueStatus();
+    }
+   
+    // UPDATE PRICE BASED ON ROOM TYPE
+    private void updateRoomPrice() {
+
+    String type = (String) jComboBox1.getSelectedItem();
+
+    if ("Single".equals(type)) {
+        jTextField2.setText("1200");
+    } else if ("Double".equals(type)) {
+        jTextField2.setText("1800");
+    } else if ("Suite".equals(type)) {
+        jTextField2.setText("3500");
+    }
+    }
+    
+    // UPDATE STATUS LABEL
+    private void updateStatus(String message) {
+    jLabel7.setText(message);
+    }
+
+    // UPDATE BOOKING QUEUE LABEL
+    private void updateQueueStatus() {
+
+    RoomReservationRecorder.Booking next =
+            tracker.peekBooking();
+
+    if (next == null) {
+        jLabel8.setText(
+            "Booking Queue: 0 Guests | Next: None"
+        );
+    } else {
+        jLabel8.setText(
+            "Booking Queue: " + tracker.getQueueCount()
+            + " Guests | Next: " + next.guestName
+        );
+    }
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
