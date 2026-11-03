@@ -88,6 +88,347 @@ public class HOME extends javax.swing.JFrame {
     }
     }
     
+    // REFRESH RECORDS TABLE IF OPEN
+    private void refreshRecords() {
+
+    if (recordsWindow != null &&
+        recordsWindow.isDisplayable()) {
+
+        recordsWindow.refreshTable();
+    }
+    }
+    
+    // ADD ROOM
+    private void addRoom() {
+
+    try {
+
+        String numberText = jTextField1.getText().trim();
+        String priceText = jTextField2.getText().trim();
+
+        if (numberText.isEmpty() || priceText.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Please enter room number and price."
+            );
+            return;
+        }
+
+        int number = Integer.parseInt(numberText);
+        double price = Double.parseDouble(priceText);
+
+        String type = (String) jComboBox1.getSelectedItem();
+        String guest = jTextField3.getText().trim();
+
+        if (number <= 0 || price <= 0) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Room number and price must be greater than zero."
+            );
+            return;
+        }
+
+        if (tracker.addRoom(number, type, price)) {
+
+            if (!guest.isEmpty()) {
+                tracker.assignRoom(number, guest);
+            }
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Room " + number + " added successfully!"
+            );
+
+            updateStatus("Room added successfully.");
+            refreshRecords();
+            clearFields();
+
+        } else {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Room already exists or storage is full."
+            );
+
+            updateStatus("Failed to add room.");
+        }
+
+    } catch (NumberFormatException e) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Room number and price must be valid numbers."
+        );
+    }
+    }
+    
+    // BOOK ROOM - ADD TO FIFO QUEUE
+    private void bookRoom() {
+
+    try {
+
+        String numberText = jTextField1.getText().trim();
+        String guest = jTextField3.getText().trim();
+
+        if (numberText.isEmpty() || guest.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Enter a room number and guest name."
+            );
+            return;
+        }
+
+        int number = Integer.parseInt(numberText);
+
+        if (tracker.enqueueBooking(number, guest)) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Booking added to queue for " + guest
+            );
+
+            updateStatus("Booking added to queue.");
+            updateQueueStatus();
+
+        } else {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Booking failed. Check if the room exists, "
+                + "is available, or already has a pending booking."
+            );
+
+            updateStatus("Booking failed.");
+        }
+
+    } catch (NumberFormatException e) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Enter a valid room number."
+        );
+    }
+    }
+    
+    // PROCESS NEXT BOOKING - FIFO
+    private void nextBooking() {
+
+    RoomReservationRecorder.Booking booking =
+            tracker.dequeueBooking();
+
+    if (booking == null) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "There are no pending bookings."
+        );
+
+        updateStatus("Booking queue is empty.");
+
+    } else {
+
+        int index = tracker.searchRoom(booking.roomNumber);
+
+        if (index != -1) {
+
+            RoomReservationRecorder.Room room =
+                    tracker.getRoomAt(index);
+
+            if (room.status.equals("Occupied") &&
+                room.guestName.equals(booking.guestName)) {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Next booking processed!\n"
+                    + "Guest: " + booking.guestName
+                    + "\nRoom: " + booking.roomNumber
+                );
+
+                updateStatus("Booking processed successfully.");
+
+            } else {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Booking removed, but room "
+                    + booking.roomNumber
+                    + " could not be assigned."
+                );
+
+                updateStatus("Booking could not be assigned.");
+            }
+        }
+
+    }
+
+    updateQueueStatus();
+    refreshRecords();
+    }
+
+    
+    // ROOM AVAILABILITY
+    private void showAvailability() {
+
+    int total = tracker.getSize();
+    int available = tracker.countAvailableRooms();
+    int occupied = tracker.countOccupiedRooms();
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        "ROOM AVAILABILITY\n\n"
+        + "Total Rooms: " + total
+        + "\nAvailable Rooms: " + available
+        + "\nOccupied Rooms: " + occupied,
+        "Room Availability",
+        javax.swing.JOptionPane.INFORMATION_MESSAGE
+    );
+
+    updateStatus("Room availability displayed.");
+    }
+
+    // ASSIGN OR VACATE
+    private void assignOrVacate() {
+
+    try {
+
+        String input = jTextField1.getText().trim();
+
+        if (input.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Enter a room number first."
+            );
+            return;
+        }
+
+        int number = Integer.parseInt(input);
+
+        String[] options = {
+            "Assign Room",
+            "Vacate Room"
+        };
+
+        int choice = javax.swing.JOptionPane.showOptionDialog(
+            this,
+            "Choose an operation for Room " + number,
+            "Assign / Vacate",
+            javax.swing.JOptionPane.DEFAULT_OPTION,
+            javax.swing.JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]
+        );
+
+        if (choice == 0) {
+
+            String guest = jTextField3.getText().trim();
+
+            if (guest.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Enter a guest name first."
+                );
+                return;
+            }
+
+            if (tracker.assignRoom(number, guest)) {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Room assigned to " + guest
+                );
+
+                updateStatus("Room assigned.");
+                refreshRecords();
+
+            } else {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Room not found or already occupied."
+                );
+            }
+
+        } else if (choice == 1) {
+
+            if (tracker.vacateRoom(number)) {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Room " + number + " vacated successfully."
+                );
+
+                updateStatus("Room vacated.");
+                refreshRecords();
+
+            } else {
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Room not found or already available."
+                );
+            }
+        }
+
+    } catch (NumberFormatException e) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Enter a valid room number."
+        );
+    }
+    }
+    
+    // SEARCH ROOM - MANUAL LINEAR SEARCH
+    private void searchRoom() {
+
+    try {
+
+        String input = jTextField1.getText().trim();
+
+        if (input.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Enter a room number to search."
+            );
+            return;
+        }
+
+        int number = Integer.parseInt(input);
+
+        int index = tracker.searchRoom(number);
+
+        if (index == -1) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Room " + number + " NOT FOUND!"
+            );
+
+            updateStatus("Room not found.");
+
+        } else {
+
+            RoomReservationRecorder.Room room =
+                    tracker.getRoomAt(index);
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "ROOM FOUND!\n\n"
+                + "Room Number: " + room.roomNumber
+                + "\nRoom Type: " + room.roomType
+                + "\nRoom Price: PHP " + room.price
+                + "\nStatus: " + room.status
+                + "\nGuest Name: " + room.guestName
+            );
+
+            updateStatus("Room found successfully.");
+        }
+
+    } catch (NumberFormatException e) {
+
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Enter a valid numeric room number."
+        );
+    }
+    }
+
+    // CLEAR INPUT FIELDS
+    private void clearFields() {
+
+    jTextField1.setText("");
+    jComboBox1.setSelectedIndex(0);
+    jTextField2.setText("1200");
+    jTextField3.setText("");
+
+    jTextField1.requestFocus();
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
