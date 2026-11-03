@@ -10,15 +10,72 @@ package roomreservationrecorder;
  */
 public class RECORDTAB extends javax.swing.JFrame {
     
+    private final RoomReservationRecorder tracker;
+    private javax.swing.table.DefaultTableModel tableModel;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RECORDTAB.class.getName());
-
+    
     /**
      * Creates new form RECORDTAB
      */
-    public RECORDTAB() {
-        initComponents();
+   public RECORDTAB(RoomReservationRecorder tracker) {
+    initComponents();
+
+    
+    
+    this.tracker = tracker;
+
+    setTitle("Room Reservation Records");
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(
+        javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+    );
+
+    
+    
+    tableModel = new javax.swing.table.DefaultTableModel(
+        new Object[][]{},
+        new String[]{
+            "Room Number",
+            "Room Type",
+            "Room Price",
+            "Status",
+            "Guest Name"
+        }
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    jTable1.setModel(tableModel);
+
+    refreshTable();
+    }
+   
+   public void refreshTable() {
+
+    tableModel.setRowCount(0);
+
+    for (int i = 0; i < tracker.getSize(); i++) {
+
+        RoomReservationRecorder.Room room =
+            tracker.getRoomAt(i);
+
+        tableModel.addRow(new Object[]{
+            room.roomNumber,
+            room.roomType,
+            "PHP " + room.price,
+            room.status,
+            room.guestName
+        });
     }
 
+    jLabel3.setText(
+        "Total Records: " + tracker.getSize()
+    );
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
