@@ -16,8 +16,6 @@ public class HOME extends javax.swing.JFrame {
 
     // Records window reference
     private RECORDTAB recordsWindow = null;
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HOME.class.getName());
 
     /**
      * Creates new form OPERATOR
@@ -57,17 +55,17 @@ public class HOME extends javax.swing.JFrame {
     String type = (String) jComboBox1.getSelectedItem();
 
     if ("Single".equals(type)) {
-        jTextField2.setText("₱1,200.00");
+        jTextField2.setText("1200");
     } else if ("Double".equals(type)) {
-        jTextField2.setText("₱1,800.00");
+        jTextField2.setText("1800");
     }else if ("Triple".equals(type)) {
-        jTextField2.setText("₱3,500.00");
+        jTextField2.setText("3500");
     } else if ("Suites".equals(type)) {
-        jTextField2.setText("₱5,000.00");
+        jTextField2.setText("5000");
     }else if ("Deluxe".equals(type)) {
-        jTextField2.setText("₱7,000.00");
+        jTextField2.setText("7000");
     }else if ("VIP".equals(type)) {
-        jTextField2.setText("₱10,000.00");
+        jTextField2.setText("10000");
     }
     }
     
@@ -108,7 +106,6 @@ public class HOME extends javax.swing.JFrame {
     private void addRoom() {
 
     try {
-
         String numberText = jTextField1.getText().trim();
         String priceText = jTextField2.getText().trim();
 
@@ -123,20 +120,16 @@ public class HOME extends javax.swing.JFrame {
         double price = Double.parseDouble(priceText);
 
         String type = (String) jComboBox1.getSelectedItem();
-        String guest = jTextField3.getText().trim();
 
         if (number <= 0 || price <= 0) {
             javax.swing.JOptionPane.showMessageDialog(
-                this, "Room number and price must be greater than zero."
+                this,
+                "Room number and price must be greater than zero."
             );
             return;
         }
 
         if (tracker.addRoom(number, type, price)) {
-
-            if (!guest.isEmpty()) {
-                tracker.assignRoom(number, guest);
-            }
 
             javax.swing.JOptionPane.showMessageDialog(
                 this, "Room " + number + " added successfully!"
@@ -159,16 +152,15 @@ public class HOME extends javax.swing.JFrame {
     } catch (NumberFormatException e) {
 
         javax.swing.JOptionPane.showMessageDialog(
-            this, "Room number and price must be valid numbers."
+            this,
+            "Room number and price must be valid numbers."
         );
     }
     }
     
     // BOOK ROOM - ADD TO FIFO QUEUE
     private void bookRoom() {
-
     try {
-
         String numberText = jTextField1.getText().trim();
         String guest = jTextField3.getText().trim();
 
@@ -180,29 +172,42 @@ public class HOME extends javax.swing.JFrame {
         }
 
         int number = Integer.parseInt(numberText);
+        int index = tracker.searchRoom(number);
+
+        if (index == -1) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Room number does not exist. Add the room first."
+            );
+            return;
+        }
+
+        RoomReservationRecorder.Room room = tracker.getRoomAt(index);
+
+        if (!room.status.equals("Available")) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "This room is already occupied."
+            );
+            return;
+        }
 
         if (tracker.enqueueBooking(number, guest)) {
-
             javax.swing.JOptionPane.showMessageDialog(
-                this, "Booking added to queue for " + guest
+                this, "Booking successfully added!\n"
+                + "Guest: " + guest
+                + "\nRoom: " + number
             );
 
-            updateStatus("Booking added to queue.");
+            updateStatus("Booking added successfully.");
             updateQueueStatus();
-
+            refreshRecords();
         } else {
-
             javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Booking failed. Check if the room exists, "
-                + "is available, or already has a pending booking."
+                this, "Booking failed. This room may already have a pending booking."
             );
-
             updateStatus("Booking failed.");
         }
 
     } catch (NumberFormatException e) {
-
         javax.swing.JOptionPane.showMessageDialog(
             this, "Enter a valid room number."
         );
@@ -471,9 +476,9 @@ public class HOME extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBackground(new java.awt.Color(255, 102, 255));
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBackground(new java.awt.Color(153, 0, 153));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -504,7 +509,7 @@ public class HOME extends javax.swing.JFrame {
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel3.setBackground(new java.awt.Color(153, 0, 153));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -557,51 +562,51 @@ public class HOME extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Guest Name:");
 
-        jButton1.setBackground(new java.awt.Color(204, 204, 204));
+        jButton1.setBackground(new java.awt.Color(153, 0, 153));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("ADD ROOM");
         jButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton2.setBackground(new java.awt.Color(204, 204, 204));
+        jButton2.setBackground(new java.awt.Color(153, 0, 153));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(0, 0, 0));
         jButton2.setText("CLEAR");
         jButton2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton2.addActionListener(this::jButton2ActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(204, 204, 204));
+        jButton3.setBackground(new java.awt.Color(153, 0, 153));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton3.setForeground(new java.awt.Color(0, 0, 0));
         jButton3.setText("BOOK ROOMS");
         jButton3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton4.setBackground(new java.awt.Color(204, 204, 204));
+        jButton4.setBackground(new java.awt.Color(153, 0, 153));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton4.setForeground(new java.awt.Color(0, 0, 0));
         jButton4.setText("NEXT BOOKING");
         jButton4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton5.setBackground(new java.awt.Color(204, 204, 204));
+        jButton5.setBackground(new java.awt.Color(153, 0, 153));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton5.setForeground(new java.awt.Color(0, 0, 0));
         jButton5.setText("ROOM AVAIL");
         jButton5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton5.addActionListener(this::jButton5ActionPerformed);
 
-        jButton6.setBackground(new java.awt.Color(204, 204, 204));
+        jButton6.setBackground(new java.awt.Color(153, 0, 153));
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton6.setForeground(new java.awt.Color(0, 0, 0));
         jButton6.setText("ASSIGN/VACATE");
         jButton6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton7.setBackground(new java.awt.Color(204, 204, 204));
+        jButton7.setBackground(new java.awt.Color(153, 0, 153));
         jButton7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton7.setForeground(new java.awt.Color(0, 0, 0));
         jButton7.setText("SEARCH ROOM");
         jButton7.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton8.setBackground(new java.awt.Color(204, 204, 204));
+        jButton8.setBackground(new java.awt.Color(153, 0, 153));
         jButton8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton8.setForeground(new java.awt.Color(0, 0, 0));
         jButton8.setText("VIEW RECORDS");
@@ -738,27 +743,9 @@ public class HOME extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-           javax.swing.SwingUtilities.invokeLater(() -> {
+    javax.swing.SwingUtilities.invokeLater(() -> {
         new HOME().setVisible(true);
     });
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new HOME().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

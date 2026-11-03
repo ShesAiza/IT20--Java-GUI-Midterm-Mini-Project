@@ -228,8 +228,15 @@ public class RoomReservationRecorder {
             HOME home = new HOME();
             home.setVisible(true);
         });
-    
-        
     }
+    public Booking getBookingAt(int position) {
+    if (position < 0 || position >= queueCount) {
+        return null;
+    }
+
+    int actualPosition = (front + position) % bookingQueue.length;
+    return bookingQueue[actualPosition];
+    }
+    
     
 }
