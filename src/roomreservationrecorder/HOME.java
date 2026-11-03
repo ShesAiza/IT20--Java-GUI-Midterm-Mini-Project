@@ -31,7 +31,7 @@ public class HOME extends javax.swing.JFrame {
     // Room types
     jComboBox1.setModel(
         new javax.swing.DefaultComboBoxModel<>(
-            new String[]{"Single", "Double", "Suite"}
+            new String[]{"Single", "Double", "Triple", "Suites", "Deluxe", "VIP"}
         )
     );
 
@@ -57,11 +57,17 @@ public class HOME extends javax.swing.JFrame {
     String type = (String) jComboBox1.getSelectedItem();
 
     if ("Single".equals(type)) {
-        jTextField2.setText("1200");
+        jTextField2.setText("₱1,200.00");
     } else if ("Double".equals(type)) {
-        jTextField2.setText("1800");
-    } else if ("Suite".equals(type)) {
-        jTextField2.setText("3500");
+        jTextField2.setText("₱1,800.00");
+    }else if ("Triple".equals(type)) {
+        jTextField2.setText("₱3,500.00");
+    } else if ("Suites".equals(type)) {
+        jTextField2.setText("₱5,000.00");
+    }else if ("Deluxe".equals(type)) {
+        jTextField2.setText("₱7,000.00");
+    }else if ("VIP".equals(type)) {
+        jTextField2.setText("₱10,000.00");
     }
     }
     
