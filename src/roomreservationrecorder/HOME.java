@@ -378,7 +378,7 @@ public class HOME extends javax.swing.JFrame {
     }
     
     // SEARCH ROOM - MANUAL LINEAR SEARCH
-    // SEARCH ROOM BY ROOM NUMBER OR GUEST NAME
+   // SEARCH ROOM BY ROOM NUMBER OR GUEST NAME
     private void searchRoom() {
 
     String input = javax.swing.JOptionPane.showInputDialog(
@@ -388,30 +388,22 @@ public class HOME extends javax.swing.JFrame {
         javax.swing.JOptionPane.QUESTION_MESSAGE
     );
 
-    // If Cancel is clicked
-    if (input == null) {
+    if (input == null || input.trim().isEmpty()) {
         return;
     }
 
     input = input.trim();
 
-    if (input.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this, "Please enter a room number or guest name."
-        );
-        return;
-    }
-
     int foundIndex = -1;
 
-    // First, try searching by room number
+    // SEARCH BY ROOM NUMBER
     try {
         int roomNumber = Integer.parseInt(input);
         foundIndex = tracker.searchRoom(roomNumber);
 
     } catch (NumberFormatException e) {
 
-        // If input is not a number, search by guest name
+        // SEARCH BY GUEST NAME USING LINEAR SEARCH
         for (int i = 0; i < tracker.getSize(); i++) {
 
             RoomReservationRecorder.Room room =
@@ -428,36 +420,36 @@ public class HOME extends javax.swing.JFrame {
         }
     }
 
-    // If no record was found
+    // IF NOT FOUND
     if (foundIndex == -1) {
 
         javax.swing.JOptionPane.showMessageDialog(
             this,
-            "No room record found for: " + input,
+            "No matching room or guest found: " + input,
             "Search Result",
             javax.swing.JOptionPane.INFORMATION_MESSAGE
         );
 
-        updateStatus("No matching room found.");
+        updateStatus("Record not found.");
         return;
     }
 
-    // Open the Records window
+    // OPEN RECORDS WINDOW
     if (recordsWindow == null ||
         !recordsWindow.isDisplayable()) {
 
         recordsWindow = new RECORDTAB(tracker);
     }
 
-    // Display only the matching room
-    recordsWindow.showOnlyRoom(foundIndex);
+    // HIGHLIGHT THE MATCHING RECORD
+    recordsWindow.highlightRoom(foundIndex);
 
     recordsWindow.setVisible(true);
     recordsWindow.setLocationRelativeTo(this);
     recordsWindow.toFront();
 
-    updateStatus("Room record found.");
-    }   
+    updateStatus("Record found successfully.");
+    }
 
     // CLEAR INPUT FIELDS
     private void clearFields() {
