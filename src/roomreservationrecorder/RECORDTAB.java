@@ -18,10 +18,8 @@ public class RECORDTAB extends javax.swing.JFrame {
      * Creates new form RECORDTAB
      */
    public RECORDTAB(RoomReservationRecorder tracker) {
-    initComponents();
+     initComponents();
 
-    
-    
     this.tracker = tracker;
 
     setTitle("Room Reservation Records");
@@ -30,8 +28,6 @@ public class RECORDTAB extends javax.swing.JFrame {
         javax.swing.WindowConstants.DISPOSE_ON_CLOSE
     );
 
-    
-    
     tableModel = new javax.swing.table.DefaultTableModel(
         new Object[][]{},
         new String[]{
@@ -50,55 +46,28 @@ public class RECORDTAB extends javax.swing.JFrame {
 
     jTable1.setModel(tableModel);
 
-    // Booking Records table
     bookingTableModel =
-    new javax.swing.table.DefaultTableModel(
-        new Object[][]{},
-        new String[]{
-            "Queue No.",
-            "Room Number",
-            "Guest Name"
-        }
-    ) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
-    
-    
-    // EDIT ROOM BUTTON
-    javax.swing.JButton editButton =
-    new javax.swing.JButton("EDIT ROOM");
+        new javax.swing.table.DefaultTableModel(
+            new Object[][]{},
+            new String[]{
+                "Queue No.",
+                "Room Number",
+                "Guest Name"
+            }
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-    editButton.addActionListener(e -> editSelectedRoom());
-
-    jPanel1.add(editButton,
-        new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 48, 100, 28));
-
-    jPanel1.setComponentZOrder(editButton, 0);
-
-    // DELETE ROOM BUTTON
-    javax.swing.JButton deleteButton =
-        new javax.swing.JButton("DELETE ROOM");
-
-    deleteButton.addActionListener(e -> deleteSelectedRoom());
-
-    jPanel1.add(deleteButton,
-        new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 48, 110, 28));
-
-    jPanel1.setComponentZOrder(deleteButton, 0);
-
-    
     jTable2.setModel(bookingTableModel);
 
-    // Load both tables
     refreshTable();
     }
    
-   
-// EDIT SELECTED ROOM
-private void editSelectedRoom() {
+    // EDIT SELECTED ROOM
+    private void editSelectedRoom() {
 
     int selectedRow = jTable1.getSelectedRow();
 
@@ -350,6 +319,8 @@ private void editSelectedRoom() {
         jLabel4 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -434,7 +405,19 @@ private void editSelectedRoom() {
         jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("Search");
         jButton1.addActionListener(this::jButton1ActionPerformed);
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(267, 50, -1, -1));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 50, -1, -1));
+
+        jButton2.setBackground(new java.awt.Color(0, 0, 0));
+        jButton2.setForeground(new java.awt.Color(0, 255, 0));
+        jButton2.setText("EDIT ROOM");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, -1, -1));
+
+        jButton3.setBackground(new java.awt.Color(0, 0, 0));
+        jButton3.setForeground(new java.awt.Color(255, 0, 0));
+        jButton3.setText("DELETE ROOM");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 50, 110, -1));
 
         jScrollPane1.setBackground(new java.awt.Color(255, 0, 204));
         jScrollPane1.setForeground(new java.awt.Color(0, 0, 0));
@@ -562,6 +545,14 @@ private void editSelectedRoom() {
     }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+         editSelectedRoom();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        deleteSelectedRoom();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -583,6 +574,8 @@ private void editSelectedRoom() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
