@@ -65,12 +65,184 @@ public class RECORDTAB extends javax.swing.JFrame {
             return false;
         }
     };
+    
+    
+    // EDIT ROOM BUTTON
+    javax.swing.JButton editButton =
+    new javax.swing.JButton("EDIT ROOM");
 
+    editButton.addActionListener(e -> editSelectedRoom());
+
+    jPanel1.add(editButton,
+        new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 48, 100, 28));
+
+    jPanel1.setComponentZOrder(editButton, 0);
+
+    // DELETE ROOM BUTTON
+    javax.swing.JButton deleteButton =
+        new javax.swing.JButton("DELETE ROOM");
+
+    deleteButton.addActionListener(e -> deleteSelectedRoom());
+
+    jPanel1.add(deleteButton,
+        new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 48, 110, 28));
+
+    jPanel1.setComponentZOrder(deleteButton, 0);
+
+    
     jTable2.setModel(bookingTableModel);
 
     // Load both tables
     refreshTable();
     }
+   
+   
+// EDIT SELECTED ROOM
+private void editSelectedRoom() {
+
+    int selectedRow = jTable1.getSelectedRow();
+
+    if (selectedRow == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Please select a room to edit."
+        );
+        return;
+    }
+
+    int roomNumber = (int) tableModel.getValueAt(selectedRow, 0);
+
+    int index = tracker.searchRoom(roomNumber);
+
+    if (index == -1) {
+        return;
+    }
+
+    RoomReservationRecorder.Room room =
+        tracker.getRoomAt(index);
+
+    javax.swing.JTextField numberField =
+        new javax.swing.JTextField(String.valueOf(room.roomNumber));
+
+    String[] types = {
+        "Single", "Double", "Triple",
+        "Suites", "Deluxe", "VIP"
+    };
+
+    javax.swing.JComboBox<String> typeBox =
+        new javax.swing.JComboBox<>(types);
+
+    typeBox.setSelectedItem(room.roomType);
+
+    javax.swing.JTextField priceField =
+        new javax.swing.JTextField(String.valueOf(room.price));
+
+    javax.swing.JPanel panel = new javax.swing.JPanel(
+        new java.awt.GridLayout(0, 2, 5, 5)
+    );
+
+    panel.add(new javax.swing.JLabel("Room Number:"));
+    panel.add(numberField);
+
+    panel.add(new javax.swing.JLabel("Room Type:"));
+    panel.add(typeBox);
+
+    panel.add(new javax.swing.JLabel("Room Price:"));
+    panel.add(priceField);
+
+    int choice = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        panel,
+        "Edit Room " + roomNumber,
+        javax.swing.JOptionPane.OK_CANCEL_OPTION
+    );
+
+    if (choice == javax.swing.JOptionPane.OK_OPTION) {
+
+        try {
+            int newNumber =
+                Integer.parseInt(numberField.getText().trim());
+
+            double newPrice =
+                Double.parseDouble(priceField.getText().trim());
+
+            String newType =
+                (String) typeBox.getSelectedItem();
+
+            if (newNumber <= 0 || newPrice <= 0) {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Room number and price must be greater than zero."
+                );
+                return;
+            }
+
+            if (tracker.updateRoom(
+                roomNumber, newNumber, newType, newPrice)) {
+
+                refreshTable();
+
+                javax.swing.JOptionPane.showMessageDialog(
+                    this, "Room updated successfully!"
+                );
+
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(
+                    this,
+                    "Update failed. Check the room number or duplicate records."
+                );
+            }
+
+        } catch (NumberFormatException e) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Please enter valid numbers."
+            );
+        }
+    }
+    }
+
+    // DELETE SELECTED ROOM
+    private void deleteSelectedRoom() {
+
+    int selectedRow = jTable1.getSelectedRow();
+
+    if (selectedRow == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Please select a room to delete."
+        );
+        return;
+    }
+
+    int roomNumber = (int) tableModel.getValueAt(selectedRow, 0);
+
+    int confirm = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "Are you sure you want to delete Room " + roomNumber + "?",
+        "Confirm Delete",
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.WARNING_MESSAGE
+    );
+
+    if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+
+        if (tracker.deleteRoom(roomNumber)) {
+
+            refreshTable();
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this, "Room deleted successfully!"
+            );
+
+        } else {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "Cannot delete this room.\n"
+                + "It may be occupied or have a pending booking."
+            );
+        }
+    }
+    }
+
    
    public void refreshTable() {
 
