@@ -77,15 +77,25 @@ public class RECORDTAB extends javax.swing.JFrame {
     )
     );
 
-   
+   // ROOM AVAILABILITY FILTER
+    jComboBox1.setModel(
+    new javax.swing.DefaultComboBoxModel<>(
+        new String[]{
+            "All Status",
+            "Available",
+            "Occupied"
+            }
+        )
+    );
 
     // FILTER ACTION LISTENERS
     jComboBox1.addActionListener(e -> refreshTable());
-  
+    jComboBox2.addActionListener(e -> refreshTable());	
 
     // RESET FILTER BUTTON
     jButton4.addActionListener(e -> {
     jComboBox1.setSelectedIndex(0);
+    jComboBox2.setSelectedIndex(0);
     
     refreshTable();
     });
