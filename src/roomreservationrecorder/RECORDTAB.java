@@ -77,10 +77,20 @@ public class RECORDTAB extends javax.swing.JFrame {
     // DISPLAY ROOM RECORDS
     tableModel.setRowCount(0);
 
-    for (int i = 0; i < tracker.getSize(); i++) {
+    // SORT ROOM NUMBERS IN ASCENDING ORDER
+    java.util.ArrayList<RoomReservationRecorder.Room> sortedRooms =
+        new java.util.ArrayList<>();
 
-        RoomReservationRecorder.Room room =
-            tracker.getRoomAt(i);
+    for (int i = 0; i < tracker.getSize(); i++) {
+        sortedRooms.add(tracker.getRoomAt(i));
+    }
+
+    sortedRooms.sort(
+        java.util.Comparator.comparingInt(room -> room.roomNumber)
+    );
+
+    // DISPLAY SORTED ROOM RECORDS
+    for (RoomReservationRecorder.Room room : sortedRooms) {
 
         tableModel.addRow(new Object[]{
             room.roomNumber,
@@ -130,19 +140,29 @@ public class RECORDTAB extends javax.swing.JFrame {
     // HIGHLIGHT SEARCHED ROOM WITHOUT HIDING OTHER RECORDS
     public void highlightRoom(int index) {
 
-    // Reload all room records
     refreshTable();
 
-    // Check if the selected row exists
-    if (index >= 0 && index < jTable1.getRowCount()) {
+    if (index < 0 || index >= tracker.getSize()) {
+        return;
+    }
 
-        // Highlight the matching row
-        jTable1.setRowSelectionInterval(index, index);
+    RoomReservationRecorder.Room searchedRoom =
+        tracker.getRoomAt(index);
 
-        // Scroll to the matching row
-        jTable1.scrollRectToVisible(
-            jTable1.getCellRect(index, 0, true)
-        );
+    for (int i = 0; i < jTable1.getRowCount(); i++) {
+
+        int roomNumber = (int) jTable1.getValueAt(i, 0);
+
+        if (roomNumber == searchedRoom.roomNumber) {
+
+            jTable1.setRowSelectionInterval(i, i);
+
+            jTable1.scrollRectToVisible(
+                jTable1.getCellRect(i, 0, true)
+            );
+
+            break;
+        }
     }
     }
     @SuppressWarnings("unchecked")
