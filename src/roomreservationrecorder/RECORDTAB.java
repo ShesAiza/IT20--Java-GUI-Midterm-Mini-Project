@@ -119,10 +119,39 @@ public class RECORDTAB extends javax.swing.JFrame {
         }
     }
 
+    
+    
     // DISPLAY TOTAL BOOKING RECORDS
     jLabel7.setText(
         "Total Booking Records: " + tracker.getQueueCount()
     );
+    }
+    
+    // DISPLAY ONLY THE SEARCHED ROOM
+    public void showOnlyRoom(int index) {
+
+    tableModel.setRowCount(0);
+
+    if (index < 0 || index >= tracker.getSize()) {
+        return;
+    }
+
+    RoomReservationRecorder.Room room =
+        tracker.getRoomAt(index);
+
+    tableModel.addRow(new Object[]{
+        room.roomNumber,
+        room.roomType,
+        "PHP " + room.price,
+        room.status,
+        room.guestName
+    });
+
+    // Update the record count
+    jLabel3.setText("Search Result: 1 Room Found");
+
+    // Keep booking records visible
+    refreshBookingTable();
     }
     /**
      * This method is called from within the constructor to initialize the form.

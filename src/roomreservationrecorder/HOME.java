@@ -378,57 +378,86 @@ public class HOME extends javax.swing.JFrame {
     }
     
     // SEARCH ROOM - MANUAL LINEAR SEARCH
+    // SEARCH ROOM BY ROOM NUMBER OR GUEST NAME
     private void searchRoom() {
 
+    String input = javax.swing.JOptionPane.showInputDialog(
+        this,
+        "Enter Room Number or Guest Name:",
+        "Search Room",
+        javax.swing.JOptionPane.QUESTION_MESSAGE
+    );
+
+    // If Cancel is clicked
+    if (input == null) {
+        return;
+    }
+
+    input = input.trim();
+
+    if (input.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this, "Please enter a room number or guest name."
+        );
+        return;
+    }
+
+    int foundIndex = -1;
+
+    // First, try searching by room number
     try {
-
-        String input = jTextField1.getText().trim();
-
-        if (input.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(
-                this, "Enter a room number to search."
-            );
-            return;
-        }
-
-        int number = Integer.parseInt(input);
-
-        int index = tracker.searchRoom(number);
-
-        if (index == -1) {
-
-            javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "Room " + number + " NOT FOUND!"
-            );
-
-            updateStatus("Room not found.");
-
-        } else {
-
-            RoomReservationRecorder.Room room =
-                    tracker.getRoomAt(index);
-
-            javax.swing.JOptionPane.showMessageDialog(
-                this,
-                "ROOM FOUND!\n\n"
-                + "Room Number: " + room.roomNumber
-                + "\nRoom Type: " + room.roomType
-                + "\nRoom Price: PHP " + room.price
-                + "\nStatus: " + room.status
-                + "\nGuest Name: " + room.guestName
-            );
-
-            updateStatus("Room found successfully.");
-        }
+        int roomNumber = Integer.parseInt(input);
+        foundIndex = tracker.searchRoom(roomNumber);
 
     } catch (NumberFormatException e) {
 
+        // If input is not a number, search by guest name
+        for (int i = 0; i < tracker.getSize(); i++) {
+
+            RoomReservationRecorder.Room room =
+                tracker.getRoomAt(i);
+
+            if (room.guestName != null &&
+                room.guestName.toLowerCase().contains(
+                    input.toLowerCase()
+                )) {
+
+                foundIndex = i;
+                break;
+            }
+        }
+    }
+
+    // If no record was found
+    if (foundIndex == -1) {
+
         javax.swing.JOptionPane.showMessageDialog(
-            this, "Enter a valid numeric room number."
+            this,
+            "No room record found for: " + input,
+            "Search Result",
+            javax.swing.JOptionPane.INFORMATION_MESSAGE
         );
+
+        updateStatus("No matching room found.");
+        return;
     }
+
+    // Open the Records window
+    if (recordsWindow == null ||
+        !recordsWindow.isDisplayable()) {
+
+        recordsWindow = new RECORDTAB(tracker);
     }
+
+    // Display only the matching room
+    recordsWindow.showOnlyRoom(foundIndex);
+
+    recordsWindow.setVisible(true);
+    recordsWindow.setLocationRelativeTo(this);
+    recordsWindow.toFront();
+
+    updateStatus("Room record found.");
+    }   
 
     // CLEAR INPUT FIELDS
     private void clearFields() {
