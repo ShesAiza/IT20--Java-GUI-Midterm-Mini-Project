@@ -60,11 +60,42 @@ public class RECORDTAB extends javax.swing.JFrame {
                 return false;
             }
         };
+    
+    
+    // ROOM TYPE FILTER
+    jComboBox2.setModel(
+    new javax.swing.DefaultComboBoxModel<>(
+        new String[]{
+            "All Room Types",
+            "Single",
+            "Double",
+            "Triple",
+            "Suites",
+            "Deluxe",
+            "VIP"
+        }
+    )
+    );
+
+   
+
+    // FILTER ACTION LISTENERS
+    jComboBox1.addActionListener(e -> refreshTable());
+  
+
+    // RESET FILTER BUTTON
+    jButton4.addActionListener(e -> {
+    jComboBox1.setSelectedIndex(0);
+    
+    refreshTable();
+    });
 
     jTable2.setModel(bookingTableModel);
 
     refreshTable();
     }
+   
+   
    
     // EDIT SELECTED ROOM
     private void editSelectedRoom() {
@@ -215,22 +246,46 @@ public class RECORDTAB extends javax.swing.JFrame {
    
    public void refreshTable() {
 
-    // DISPLAY ROOM RECORDS
     tableModel.setRowCount(0);
 
-    // SORT ROOM NUMBERS IN ASCENDING ORDER
     java.util.ArrayList<RoomReservationRecorder.Room> sortedRooms =
         new java.util.ArrayList<>();
 
+    // GET SELECTED FILTERS
+    String selectedType =
+        (String) jComboBox2.getSelectedItem();
+
+    String selectedStatus =
+        (String) jComboBox1.getSelectedItem();
+
+    // CHECK EVERY ROOM
     for (int i = 0; i < tracker.getSize(); i++) {
-        sortedRooms.add(tracker.getRoomAt(i));
+
+        RoomReservationRecorder.Room room =
+            tracker.getRoomAt(i);
+
+        boolean typeMatch =
+            selectedType.equals("All Room Types") ||
+            room.roomType.equalsIgnoreCase(selectedType);
+
+        boolean statusMatch =
+            selectedStatus.equals("All Status") ||
+            room.status.equalsIgnoreCase(selectedStatus);
+
+        // ADD ONLY MATCHING ROOMS
+        if (typeMatch && statusMatch) {
+            sortedRooms.add(room);
+        }
     }
 
+    // SORT ROOM NUMBERS
     sortedRooms.sort(
-        java.util.Comparator.comparingInt(room -> room.roomNumber)
+        java.util.Comparator.comparingInt(
+            room -> room.roomNumber
+        )
     );
 
-    // DISPLAY SORTED ROOM RECORDS
+    // DISPLAY FILTERED ROOMS
     for (RoomReservationRecorder.Room room : sortedRooms) {
 
         tableModel.addRow(new Object[]{
@@ -242,12 +297,13 @@ public class RECORDTAB extends javax.swing.JFrame {
         });
     }
 
-    // DISPLAY PENDING BOOKINGS
+    // REFRESH BOOKING RECORDS
     refreshBookingTable();
 
-    // DISPLAY TOTAL RECORDS
+    // DISPLAY FILTERED TOTAL
     jLabel3.setText(
-        "Total Room Records: " + tracker.getSize()
+        "Showing: " + sortedRooms.size()
+        + " / " + tracker.getSize() + " Rooms"
     );
     }
    
@@ -321,6 +377,9 @@ public class RECORDTAB extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -411,13 +470,27 @@ public class RECORDTAB extends javax.swing.JFrame {
         jButton2.setForeground(new java.awt.Color(0, 255, 0));
         jButton2.setText("EDIT ROOM");
         jButton2.addActionListener(this::jButton2ActionPerformed);
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, -1, -1));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 50, -1, -1));
 
         jButton3.setBackground(new java.awt.Color(0, 0, 0));
         jButton3.setForeground(new java.awt.Color(255, 0, 0));
         jButton3.setText("DELETE ROOM");
         jButton3.addActionListener(this::jButton3ActionPerformed);
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 50, 110, -1));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 50, 120, -1));
+
+        jComboBox1.setBackground(new java.awt.Color(255, 0, 255));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, -1, -1));
+
+        jComboBox2.setBackground(new java.awt.Color(255, 0, 255));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
+
+        jButton4.setBackground(new java.awt.Color(0, 0, 0));
+        jButton4.setFont(new java.awt.Font("Segoe UI", 0, 8)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
+        jButton4.setText("Reset");
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, 50, 20));
 
         jScrollPane1.setBackground(new java.awt.Color(255, 0, 204));
         jScrollPane1.setForeground(new java.awt.Color(0, 0, 0));
@@ -467,12 +540,12 @@ public class RECORDTAB extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 0, 153));
         jLabel5.setText("ROOM RECORDS");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(236, 79, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(153, 0, 153));
         jLabel6.setText("BOOKING RECORDS");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(222, 405, -1, -1));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, -1, -1));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/roomreservationrecorder/tab.jpg"))); // NOI18N
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, -4, 600, 750));
@@ -576,6 +649,9 @@ public class RECORDTAB extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
