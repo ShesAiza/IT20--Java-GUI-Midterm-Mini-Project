@@ -1,17 +1,27 @@
-# IT20 Midterm: Java GUI Mini Project
+# IT20 Midterm: Hotel Room Reservation Tracker
 
 ## Overview
 
-This Java desktop application was developed as part of the IT20 Midterm Mini Project. It uses a Java GUI to provide an interactive interface and demonstrates the use of Java programming concepts and event-driven functionality.
+The **Hotel Room Reservation Tracker** is a Java desktop application designed to manage hotel rooms, guest reservations, room assignments, and booking records. The system uses a Java Swing GUI and manually implemented data structures to manage room records and pending bookings.
 
 ## Features
 
-- **Java GUI:** Provides an interactive graphical user interface.
-- **User Input:** Allows users to enter and process information through the application.
-- **Button Functions:** GUI buttons perform the corresponding program operations.
-- **Data Processing:** Processes the information entered by the user.
-- **Error Handling:** Provides appropriate feedback for invalid or incomplete input.
-- **Interactive Output:** Displays the results directly in the application.
+- **Add Room:** Adds a new room with a room number, room type, and price.
+- **Edit Room:** Updates the room number, room type, and room price of an existing room.
+- **Delete Room:** Removes an available room that does not have a pending booking.
+- **Assign Room:** Assigns an available room to a guest.
+- **Vacate Room:** Changes an occupied room back to available status.
+- **Book Room:** Adds a guest's reservation to the booking queue.
+- **Next Booking:** Processes the next pending booking using **FIFO (First In, First Out)**.
+- **Room Availability:** Displays the total number of rooms, available rooms, and occupied rooms.
+- **Search Room:** Searches for a room by room number or guest name using a manual linear search.
+- **View Records:** Displays room and booking records in tables.
+- **Filter Records:** Filters rooms by room type and availability status.
+- **Edit and Delete Records:** Allows selected room records to be edited or deleted from the records table.
+- **Booking Queue:** Displays the current number of pending bookings and the next guest in line.
+- **Input Validation:** Prevents invalid room numbers, prices, guest names, duplicate rooms, and invalid booking operations.
+
+The system stores room records using a manually implemented array and manages pending bookings using a manually implemented circular queue.
 
 ## Setup
 
@@ -23,27 +33,15 @@ git clone https://github.com/ShesAiza/IT20--Java-GUI-Midterm-Mini-Project.git
 
 2. Open the project in **Apache NetBeans**.
 
-3. Locate the main Java GUI class.
+3. Locate the `RoomReservationRecorder` project/package.
 
-4. Run the Java project in NetBeans.
+4. Run the Java project. The application starts the `HOME` GUI window.
 
-5. Test the GUI and its functions to make sure everything is working properly.
-
-## Team Roles & Contributions
-
-### Aiza Mae Datu
-- Developed and worked on the Java GUI application.
-- Assisted with the GUI design and layout.
-- Implemented and tested the application's functionality.
-- Helped manage and organize the GitHub repository.
-
-### Marnie Libago
-- Assisted with Java programming and GUI development.
-- Helped test the application and fix errors.
-- Assisted with improving the application's functionality and design.
-
-## GitHub Repository
-
-The complete source code and project files are available in the shared GitHub repository:
-
-**https://github.com/ShesAiza/IT20--Java-GUI-Midterm-Mini-Project**
+5. Use the main window to:
+   - Add rooms
+   - Book rooms
+   - Process the next booking
+   - Check room availability
+   - Assign or vacate rooms
+   - Search rooms
+   - View room
