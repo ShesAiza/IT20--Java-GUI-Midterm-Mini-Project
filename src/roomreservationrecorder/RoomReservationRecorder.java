@@ -61,6 +61,79 @@ public class RoomReservationRecorder {
         return true;
     }
 
+    
+    // EDIT ROOM
+    public boolean updateRoom(int oldNumber, int newNumber,
+                          String newType, double newPrice) {
+
+    int index = searchRoom(oldNumber);
+
+    if (index == -1 || newNumber <= 0 ||
+        newPrice <= 0 || newType == null ||
+        newType.trim().isEmpty()) {
+        return false;
+    }
+
+    // Prevent duplicate room numbers
+    int duplicateIndex = searchRoom(newNumber);
+
+    if (duplicateIndex != -1 && duplicateIndex != index) {
+        return false;
+    }
+
+    // Update pending bookings if room number changes
+    if (oldNumber != newNumber) {
+        for (int i = 0; i < queueCount; i++) {
+            int position = (front + i) % bookingQueue.length;
+
+            if (bookingQueue[position].roomNumber == oldNumber) {
+                bookingQueue[position].roomNumber = newNumber;
+            }
+        }
+    }
+
+    rooms[index].roomNumber = newNumber;
+    rooms[index].roomType = newType.trim();
+    rooms[index].price = newPrice;
+
+    return true;
+}
+
+// DELETE ROOM
+public boolean deleteRoom(int number) {
+
+    int index = searchRoom(number);
+
+    if (index == -1) {
+        return false;
+    }
+
+    // Do not delete occupied rooms
+    if (rooms[index].status.equals("Occupied")) {
+        return false;
+    }
+
+    // Do not delete rooms with pending bookings
+    for (int i = 0; i < queueCount; i++) {
+        int position = (front + i) % bookingQueue.length;
+
+        if (bookingQueue[position].roomNumber == number) {
+            return false;
+        }
+    }
+
+    // Shift remaining rooms to the left
+    for (int i = index; i < roomCount - 1; i++) {
+        rooms[i] = rooms[i + 1];
+    }
+
+    rooms[roomCount - 1] = null;
+    roomCount--;
+
+    return true;
+    }
+
+    
     // MANUAL LINEAR SEARCH
     public int searchRoom(int number) {
 
