@@ -161,38 +161,44 @@ public boolean deleteRoom(int number) {
         return roomCount;
     }
 
-    // ASSIGN ROOM
-    public boolean assignRoom(int number, String guest) {
+    public boolean assignRoom(int roomNumber, String guestName) {
 
-        int index = searchRoom(number);
+    int index = searchRoom(roomNumber);
 
-        if (index == -1 ||
-            guest == null ||
-            guest.trim().isEmpty() ||
-            rooms[index].status.equals("Occupied")) {
-            return false;
-        }
+    if (index == -1) {
+        return false;
+    }
 
-        rooms[index].guestName = guest.trim();
-        rooms[index].status = "Occupied";
+    Room room = rooms[index];
 
-        return true;
+    // Room is already being used
+    if (room.status.equalsIgnoreCase("Occupied")) {
+        return false;
+    }
+
+    // Assign guest
+    room.guestName = guestName;
+    room.status = "Occupied";
+
+    return true;
     }
 
     // VACATE ROOM
-    public boolean vacateRoom(int number) {
+    public boolean vacateRoom(int roomNumber) {
 
-        int index = searchRoom(number);
+    int index = searchRoom(roomNumber);
 
-        if (index == -1 ||
-            rooms[index].status.equals("Available")) {
-            return false;
-        }
+    if (index == -1) {
+        return false;
+    }
 
-        rooms[index].guestName = "";
-        rooms[index].status = "Available";
+    Room room = rooms[index];
 
-        return true;
+    // Remove guest
+    room.guestName = "";
+    room.status = "Available";
+
+    return true;
     }
 
     // COUNT AVAILABLE ROOMS
