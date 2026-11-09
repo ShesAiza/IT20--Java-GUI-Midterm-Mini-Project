@@ -28,6 +28,8 @@ public class RECORDTAB extends javax.swing.JFrame {
         javax.swing.WindowConstants.DISPOSE_ON_CLOSE
     );
 
+    
+    
     tableModel = new javax.swing.table.DefaultTableModel(
         new Object[][]{},
         new String[]{
@@ -106,6 +108,25 @@ public class RECORDTAB extends javax.swing.JFrame {
     }
    
    
+    // GET DEFAULT PRICE BASED ON ROOM TYPE
+    private double getRoomPrice(String type) {
+
+    if ("Single".equals(type)) {
+        return 1200;
+    } else if ("Double".equals(type)) {
+        return 1800;
+    } else if ("Triple".equals(type)) {
+        return 3500;
+    } else if ("Suites".equals(type)) {
+        return 5000;
+    } else if ("Deluxe".equals(type)) {
+        return 7000;
+    } else if ("VIP".equals(type)) {
+        return 10000;
+    }
+
+    return 1200;
+}
    
     // EDIT SELECTED ROOM
     private void editSelectedRoom() {
@@ -114,7 +135,8 @@ public class RECORDTAB extends javax.swing.JFrame {
 
     if (selectedRow == -1) {
         javax.swing.JOptionPane.showMessageDialog(
-            this, "Please select a room to edit."
+            this,
+            "Please select a room to edit."
         );
         return;
     }
@@ -131,11 +153,17 @@ public class RECORDTAB extends javax.swing.JFrame {
         tracker.getRoomAt(index);
 
     javax.swing.JTextField numberField =
-        new javax.swing.JTextField(String.valueOf(room.roomNumber));
+        new javax.swing.JTextField(
+            String.valueOf(room.roomNumber)
+        );
 
     String[] types = {
-        "Single", "Double", "Triple",
-        "Suites", "Deluxe", "VIP"
+        "Single",
+        "Double",
+        "Triple",
+        "Suites",
+        "Deluxe",
+        "VIP"
     };
 
     javax.swing.JComboBox<String> typeBox =
@@ -143,8 +171,22 @@ public class RECORDTAB extends javax.swing.JFrame {
 
     typeBox.setSelectedItem(room.roomType);
 
+    // Set price based on current room type
     javax.swing.JTextField priceField =
-        new javax.swing.JTextField(String.valueOf(room.price));
+        new javax.swing.JTextField(
+            String.valueOf(getRoomPrice(room.roomType))
+        );
+
+    // Automatically change price when room type changes
+    typeBox.addActionListener(e -> {
+
+        String selectedType =
+            (String) typeBox.getSelectedItem();
+
+        priceField.setText(
+            String.valueOf(getRoomPrice(selectedType))
+        );
+    });
 
     javax.swing.JPanel panel = new javax.swing.JPanel(
         new java.awt.GridLayout(0, 2, 5, 5)
@@ -169,32 +211,46 @@ public class RECORDTAB extends javax.swing.JFrame {
     if (choice == javax.swing.JOptionPane.OK_OPTION) {
 
         try {
+
             int newNumber =
-                Integer.parseInt(numberField.getText().trim());
+                Integer.parseInt(
+                    numberField.getText().trim()
+                );
 
             double newPrice =
-                Double.parseDouble(priceField.getText().trim());
+                Double.parseDouble(
+                    priceField.getText().trim()
+                );
 
             String newType =
                 (String) typeBox.getSelectedItem();
 
             if (newNumber <= 0 || newPrice <= 0) {
+
                 javax.swing.JOptionPane.showMessageDialog(
-                    this, "Room number and price must be greater than zero."
+                    this,
+                    "Room number and price must be greater than zero."
                 );
+
                 return;
             }
 
             if (tracker.updateRoom(
-                roomNumber, newNumber, newType, newPrice)) {
+                roomNumber,
+                newNumber,
+                newType,
+                newPrice
+            )) {
 
                 refreshTable();
 
                 javax.swing.JOptionPane.showMessageDialog(
-                    this, "Room updated successfully!"
+                    this,
+                    "Room updated successfully!"
                 );
 
             } else {
+
                 javax.swing.JOptionPane.showMessageDialog(
                     this,
                     "Update failed. Check the room number or duplicate records."
@@ -204,12 +260,13 @@ public class RECORDTAB extends javax.swing.JFrame {
         } catch (NumberFormatException e) {
 
             javax.swing.JOptionPane.showMessageDialog(
-                this, "Please enter valid numbers."
+                this,
+                "Please enter valid numbers."
             );
         }
     }
-    }
-
+    } 
+  
     // DELETE SELECTED ROOM
     private void deleteSelectedRoom() {
 
