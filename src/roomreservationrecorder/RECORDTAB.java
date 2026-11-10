@@ -14,9 +14,7 @@ public class RECORDTAB extends javax.swing.JFrame {
     private javax.swing.table.DefaultTableModel tableModel;
     private javax.swing.table.DefaultTableModel bookingTableModel;
     
-    /**
-     * Creates new form RECORDTAB
-     */
+ 
    public RECORDTAB(RoomReservationRecorder tracker) {
      initComponents();
 
@@ -460,7 +458,7 @@ public class RECORDTAB extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(153, 0, 153));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N

@@ -17,9 +17,7 @@ public class HOME extends javax.swing.JFrame {
     // Records window reference
     private RECORDTAB recordsWindow = null;
 
-    /**
-     * Creates new form OPERATOR
-     */
+  
    public HOME() {
     initComponents();
 
@@ -377,8 +375,8 @@ public class HOME extends javax.swing.JFrame {
     }
     }
     
-    // SEARCH ROOM - MANUAL LINEAR SEARCH
-   // SEARCH ROOM BY ROOM NUMBER OR GUEST NAME
+    
+    // SEARCH ROOM BY ROOM NUMBER OR GUEST NAME
     private void searchRoom() {
 
     String input = javax.swing.JOptionPane.showInputDialog(
@@ -537,7 +535,7 @@ public class HOME extends javax.swing.JFrame {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 434, 320, -1));
 
-        jPanel3.setBackground(new java.awt.Color(255, 0, 204));
+        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

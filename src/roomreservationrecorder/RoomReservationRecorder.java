@@ -4,7 +4,7 @@ package roomreservationrecorder;
 public class RoomReservationRecorder {
 
         
-          // MANUALLY IMPLEMENTED ARRAY
+    // MANUALLY IMPLEMENTED ARRAY
     private final Room[] rooms = new Room[100];
     private int roomCount = 0;
 
@@ -97,10 +97,10 @@ public class RoomReservationRecorder {
     rooms[index].price = newPrice;
 
     return true;
-}
+    }
 
-// DELETE ROOM
-public boolean deleteRoom(int number) {
+    // DELETE ROOM
+    public boolean deleteRoom(int number) {
 
     int index = searchRoom(number);
 
@@ -161,22 +161,47 @@ public boolean deleteRoom(int number) {
         return roomCount;
     }
 
+    // ASSIGN ROOM
     public boolean assignRoom(int roomNumber, String guestName) {
 
     int index = searchRoom(roomNumber);
 
-    if (index == -1) {
+    if (index == -1 ||
+        guestName == null ||
+        guestName.trim().isEmpty()) {
         return false;
     }
 
     Room room = rooms[index];
 
-    // Room is already being used
+    // Room is already occupied
     if (room.status.equalsIgnoreCase("Occupied")) {
         return false;
     }
 
-    // Assign guest
+    guestName = guestName.trim();
+
+    // Check pending bookings for this room
+    // The FIRST person who booked gets priority.
+    for (int i = 0; i < queueCount; i++) {
+
+        int position = (front + i) % bookingQueue.length;
+
+        Booking booking = bookingQueue[position];
+
+        if (booking.roomNumber == roomNumber) {
+
+            // Someone else booked this room first
+            if (!booking.guestName.equalsIgnoreCase(guestName)) {
+                return false;
+            }
+
+            // This is the first booking for this room
+            break;
+        }
+    }
+
+    // Assign room
     room.guestName = guestName;
     room.status = "Occupied";
 
@@ -229,60 +254,58 @@ public boolean deleteRoom(int number) {
         return count;
     }
 
-    // ADD BOOKING TO QUEUE
+   // ADD BOOKING TO QUEUE
     public boolean enqueueBooking(int number, String guest) {
 
-        int index = searchRoom(number);
+    int index = searchRoom(number);
 
-        if (index == -1 ||
-            guest == null ||
-            guest.trim().isEmpty() ||
-            queueCount == bookingQueue.length ||
-            !rooms[index].status.equals("Available")) {
-            return false;
-        }
+    if (index == -1 ||
+        guest == null ||
+        guest.trim().isEmpty() ||
+        queueCount == bookingQueue.length ||
+        !rooms[index].status.equals("Available")) {
+        return false;
+    }
 
-        // Prevent duplicate pending bookings for same room
-        for (int i = 0; i < queueCount; i++) {
-            int position = (front + i) % bookingQueue.length;
+    rear = (rear + 1) % bookingQueue.length;
 
-            if (bookingQueue[position].roomNumber == number) {
-                return false;
-            }
-        }
+    bookingQueue[rear] =
+            new Booking(number, guest.trim());
 
-        rear = (rear + 1) % bookingQueue.length;
+    queueCount++;
 
-        bookingQueue[rear] =
-                new Booking(number, guest.trim());
-
-        queueCount++;
-
-        return true;
+    return true;
     }
 
     // PROCESS NEXT BOOKING - FIFO
     public Booking dequeueBooking() {
 
-        if (queueCount == 0) {
-            return null;
-        }
+    if (queueCount == 0) {
+        return null;
+    }
 
-        Booking next = bookingQueue[front];
+    Booking next = bookingQueue[front];
 
-        front = (front + 1) % bookingQueue.length;
-        queueCount--;
+    int index = searchRoom(next.roomNumber);
 
-        int index = searchRoom(next.roomNumber);
+    // Do not remove the first booking if
+    // the room cannot be assigned yet.
+    if (index == -1 ||
+        !rooms[index].status.equals("Available")) {
+        return null;
+    }
 
-        if (index != -1 &&
-            rooms[index].status.equals("Available")) {
+    // Assign the room to the first person in the queue
+    rooms[index].guestName = next.guestName;
+    rooms[index].status = "Occupied";
 
-            assignRoom(next.roomNumber, next.guestName);
-            return next;
-        }
+    // Remove the processed booking
+    bookingQueue[front] = null;
 
-        return next;
+    front = (front + 1) % bookingQueue.length;
+    queueCount--;
+
+    return next;
     }
 
     // VIEW NEXT BOOKING
