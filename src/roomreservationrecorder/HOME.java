@@ -221,7 +221,7 @@ public class HOME extends javax.swing.JFrame {
     if (booking == null) {
 
         javax.swing.JOptionPane.showMessageDialog(
-            this, "There are no pending bookings."
+            this, "The Room is Already Occupied."
         );
 
         updateStatus("Booking queue is empty.");
